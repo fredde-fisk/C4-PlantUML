@@ -1,0 +1,49 @@
+name: Tests
+on:
+  push:
+    paths:
+    - '*.puml'
+    - 'tests/**'
+    - '.github/workflows/run-tests.yml'
+  pull_request:
+    branches:
+    - '**'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        plantuml_version: [1.2022.3, 1.2021.0]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Build	    
+        uses: docker://plantuml/plantuml-server:jetty-v${{ matrix.plantuml_version }}
+        with:
+          entrypoint: /bin/sh
+          args: -c "pwd && ls -la"
+
+      # - name: Render diagrams
+      #   uses: Timmy/plantuml-action@v1
+      #   with:
+      #     args: 'tests -o actual_result -DRELATIVE_INCLUDE="."'
+      # - name: Compare rendered result
+      #   run: diff --breif --recursive expected_result actual_result
+      # - name: Commit rendered diagrams
+      #   run: |
+      #     rm -rf expected_result
+      #     mv actual_result expected_result
+          
+      #     #git config --global user.email "$GH_EMAIL"
+      #     #git config --global user.name "$GH_USER"
+
+      #     #git add tests/expected_result
+      #     git status
+      #     #git commit -m "Update rendered test images"
+      #     #git push --set-upstream origin master
+      # - name: Upload to percy
+      #   run: npx percy upload tests/actual_result
+      #   if: ${{ secrets.PERCY_TOKEN != '' }}
+      #   env:
+      #     PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
