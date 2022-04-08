@@ -11,15 +11,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        plantuml_version: ["1.2022.3", "1.2021.0"]
     steps:
       - name: Checkout
         uses: actions/checkout@master
 
-      - name: Build
-        uses: docker://plantuml/plantuml-server:jetty-v${{ matrix.plantuml_version }}
+      - name: PlantUML v1.2022.3
+        uses: docker://plantuml/plantuml-server:jetty-v1.2022.3
+        with:
+          entrypoint: /bin/sh
+          args: -c "pwd && ls -la"
+
+      - name: PlantUML v1.2021.0
+        uses: docker://plantuml/plantuml-server:jetty-v1.2021.0
         with:
           entrypoint: /bin/sh
           args: -c "pwd && ls -la"
